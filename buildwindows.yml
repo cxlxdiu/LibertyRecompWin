@@ -1,0 +1,43 @@
+name: Build Windows executable
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Visual C++ environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Set up repository
+        run: python tools/setup_repo.py
+
+      - name: Configure Release build
+        run: cmake . --preset x64-Clang-Release
+
+      - name: Compile LibertyRecomp
+        run: cmake --build .\out\build\x64-Clang-Release --target LibertyRecomp
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: LibertyRecomp-Windows-x64
+          path: out/build/x64-Clang-Release/**/*.exe
+          if-no-files-found: error
