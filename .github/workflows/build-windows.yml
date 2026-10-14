@@ -29,6 +29,17 @@ jobs:
       - name: Set up repository
         run: python tools/setup_repo.py
 
+
+      - name: Update vcpkg tool
+        shell: pwsh
+        run: |
+          git -C thirdparty/vcpkg fetch origin master
+          git -C thirdparty/vcpkg checkout FETCH_HEAD
+
+      - name: Install Ninja
+        shell: pwsh
+        run: choco install ninja --yes --no-progress
+
       - name: Configure Release build
         run: cmake . --preset x64-Clang-Release
 
