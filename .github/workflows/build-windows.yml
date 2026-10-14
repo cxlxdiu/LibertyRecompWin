@@ -30,15 +30,21 @@ jobs:
         run: python tools/setup_repo.py
 
 
-      - name: Update vcpkg tool
-        shell: pwsh
-        run: |
-          git -C thirdparty/vcpkg fetch origin master
-          git -C thirdparty/vcpkg checkout FETCH_HEAD
 
       - name: Install Ninja
-        shell: pwsh
+        shell:d pwsh
         run: choco install ninja --yes --no-progress
+
+      - name: Verify Ninja
+        shell: pwsh
+        run: ninja --version
+
+        
+      - name: Install pkg-config
+        shell: pwsh
+        run: choco install pkgconfiglite --yes --no-progress
+
+
 
       - name: Configure Release build
         run: cmake . --preset x64-Clang-Release
